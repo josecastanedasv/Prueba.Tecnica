@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Creativa.Web.NorthwindServiceRef.CustomerDTO>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Customers";
+}
+
+<h2 class="mb-4">Customers</h2>
+
+<div class="row mb-3">
+    <div class="col-4">
+        <input type="text" id="countryInput" class="form-control" placeholder="Enter Country" />
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary" onclick="searchCustomers()">Search</button>
+    </div>
+</div>
+
+<div id="customersGrid"></div>
+
+@section Scripts {
+    <script>
+    var grid;
+    var initialData = @Html.Raw(Json.Encode(Model));
+
+    $(document).ready(function () {
+
+        grid = $("#customersGrid").kendoGrid({
+            dataSource: {
+                data: initialData,
+                pageSize: 10
+            },
+            pageable: true,
+            height: 450,
+            columns: [
+                { field: "CustomerID", title: "ID", width: "80px" },
+                { field: "CompanyName", title: "Company", width: "200px" },
+                { field: "ContactName", title: "Contact", width: "200px" },
+                {
+                    title: "Orders", width: "150px",
+                    template: "<a class='btn btn-primary btn-sm' href='/Customers/Orders/#=CustomerID#'>View Orders</a>"
+                }
+            ]
+        }).data("kendoGrid");
+    });
+
+    function searchCustomers() {
+        var country = $("#countryInput").val().trim();
+
+        if (!country) {
+            grid.dataSource.data(initialData);
+            return;
+        }
+
+        $.ajax({
+            url: "http://localhost:26217/NorthwindService.svc/rest/GetCustomersByCountry",
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({ country: country }),
+            success: function (result) {
+                grid.dataSource.data(result);
+            },
+            error: function (xhr) {
+                console.error("Error:", xhr);
+                alert("Could not retrieve customers. Check console for details.");
+            }
+        });
+    }
+    </script>
+}

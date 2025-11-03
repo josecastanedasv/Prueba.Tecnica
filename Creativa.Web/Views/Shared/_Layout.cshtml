@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html ng-app="northwindApp">
+
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - Northwind Demo</title>
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+
+    <!-- Kendo UI CSS -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2023.1.117/styles/kendo.default-v2.min.css" />
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Customers")">Northwind App</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4" ng-controller="NorthwindController">
+        @RenderBody()
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.1.117/js/kendo.all.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+            'use strict';
+            var app = angular.module('northwindApp', []);
+
+            app.controller('NorthwindController', function ($scope) {
+
+                $scope.searchCustomersByCountry = function () {
+                    var country = $scope.country || "";
+                    var grid = $("#customersGrid").data("kendoGrid");
+
+                    if (grid) {
+                        grid.dataSource.read({ country: country });
+                    }
+                };
+
+            });
+        })();
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>
